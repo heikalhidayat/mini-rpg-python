@@ -1,6 +1,8 @@
 #import library yang dibutuhkan
+from os import X_OK
 import random
 import time
+import copy
 
 ## Informasi Hero
 # knight memiliki komposisi kekuatan yang merata pada semua aspek
@@ -120,7 +122,11 @@ while True:
   print("1.Mulai Bertarung\n2.Inventori & Status\n3.Gacha Item\n4.Keluar game")
 
   # player milih menu
-  menu = int(input("Pilih menu: "))
+  try:
+    menu = int(input("Pilih menu: ")) 
+  except ValueError:
+    print("Masukkan angka yang valid")
+    continue
 
   # Opsi Mulai Bertarung
   if menu == 1:
@@ -131,6 +137,10 @@ while True:
     random_monster = random.randint(1, 3)
     monster = "goblin" if random_monster == 1 else "orc" if random_monster == 2 else "lizard" if random_monster == 3 else None
     time.sleep(0.8)
+
+    # Bikin copyan monster
+    monster_state = copy.deepcopy(daftar_karakter[monster])
+    player_state = copy.deepcopy(daftar_karakter[player])
 
     for i in range(5):
       print("Krss..", end="")
@@ -144,23 +154,23 @@ while True:
     time.sleep(0.8)
 
     # War time
-    while daftar_karakter[monster]["hp"] > 0:
-      print(f"HP {monster}: {daftar_karakter[monster]['hp']}")
-      print(f"HP {player.capitalize()}: {daftar_karakter[player]['hp']}")
+    while monster_state["hp"] > 0:
+      print(f"HP {monster}: {monster_state['hp']}")
+      print(f"HP {player.capitalize()}: {player_state['hp']}")
       time.sleep(0.6)
       input("Tekan ENTER untuk menyerang!!")
 
       # Data Pemain
-      hp_player = daftar_karakter[player]["hp"]
-      atk_player = daftar_karakter[player]["attack"]
-      agi_player = daftar_karakter[player]["agility"]
-      def_player = daftar_karakter[player]["defense"]
+      hp_player = player_state["hp"]
+      atk_player = player_state["attack"]
+      agi_player = player_state["agility"]
+      def_player = player_state["defense"]
 
       # Data Musuh
-      hp_musuh = daftar_karakter[monster]["hp"]
-      atk_musuh = daftar_karakter[monster]["attack"]
-      agi_musuh = daftar_karakter[monster]["agility"]
-      def_musuh = daftar_karakter[monster]["defense"]
+      hp_musuh = monster_state["hp"]
+      atk_musuh = monster_state["attack"]
+      agi_musuh = monster_state["agility"]
+      def_musuh = monster_state["defense"]
 
       # Serangan player
       if agi_musuh - agi_player > 10:
@@ -170,8 +180,8 @@ while True:
       if damage <= 0:
         damage = 1
 
-      daftar_karakter[monster]["hp"] -= damage
-      if daftar_karakter[monster]["hp"] <= 0:
+      monster_state["hp"] -= damage
+      if monster_state["hp"] <= 0:
         break
 
       # Serangan Musuh
@@ -185,20 +195,20 @@ while True:
       if damage <= 0:
         damage = 1
 
-      daftar_karakter[player]["hp"] -= damage
-      if daftar_karakter[player]["hp"] <= 0:
+      player_state["hp"] -= damage
+      if player_state["hp"] <= 0:
         break
 
     # Hasil Pertarungan
-    if daftar_karakter[player]["hp"] <= 0:
-      daftar_karakter[player]["hp"] = 0
-      print(f"Hp{monster}: {daftar_karakter[monster]["hp"]}")
+    if player_state["hp"] <= 0:
+      player_state["hp"] = 0
+      print(f"Hp{monster}: {monster_state["hp"]}")
       print(f"Anda dikalahkan monster {monster}")
       print(f"Hero {player} Mati!!")
-    if daftar_karakter[monster]["hp"] <= 0:
-      daftar_karakter[monster]["hp"] = 0
-      print(f"Hp {monster}: {daftar_karakter[monster]["hp"]}")
-      print(f"Hp {player.capitalize()}:{daftar_karakter[player]["hp"]}")
+    if monster_state["hp"] <= 0:
+      monster_state["hp"] = 0
+      print(f"Hp {monster}: {monster_state["hp"]}")
+      print(f"Hp {player.capitalize()}:{player_state["hp"]}")
       print(f"Selamat Hero {player.capitalize()} Anda mengalahkan {monster}!!")
 
     # Drop item
@@ -206,7 +216,7 @@ while True:
     if drop_monster in drop_item:
       print(f"Kamu mendapatkan item {drop_monster}")
       inventori.append(drop_monster)
-    print(f"Inventori ANda {inventori}")
+    print(f"Inventori Anda {inventori}")
 
     # Kembali ke menu utama
     input("Tekan ENTER untuk kembali ke menu utama!!")
@@ -244,7 +254,7 @@ while True:
         inventori.append(hadiah)
         counter_gacha = 0
         time.sleep(1.5)
-   
+
       elif persentase <= 30:
         hadiah = random.choice(hadiah_rare)
         print(f"Selamat!! Kamu mendapatkan hadiah Rare: {hadiah}")
@@ -261,3 +271,7 @@ while True:
 
         # Gacha lagi
         gacha = input("Apakah kamu ingin gacha lagi? (x/y): ")
+
+else:
+  print("Kamu memilih keluar dari game")
+  exit()
