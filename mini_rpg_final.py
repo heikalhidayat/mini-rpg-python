@@ -4,6 +4,9 @@ import random
 import time
 import copy
 
+# ==============================================================
+# CONSTANS
+# ==============================================================
 ## Informasi Hero
 # knight memiliki komposisi kekuatan yang merata pada semua aspek
 knight_exp = 0
@@ -99,7 +102,9 @@ daftar_karakter = {
         "defense": monster3_defense
     }
 }
-
+# ==============================================================
+# FUNCTIONS
+# ==============================================================
 # hero Player
 
 print("kall")
